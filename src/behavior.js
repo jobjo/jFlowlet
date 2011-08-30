@@ -1,99 +1,133 @@
-/**********************************************************************
-* 
-**********************************************************************/
-(function(){
-   
-    // Lifts a value into a behavior.
-    var ret = 
-        function(x){
-            return {
-                listen : function(f){f(x)}
+(function () {
+
+    /********************************************************************
+    * Maps over a behavior.
+    ********************************************************************/
+    var map = function (f, b) {
+        return (
+            mk(function (g) {
+                return (
+                    b.listen(
+                        function (x) {
+                            g(f(x));
+                        }
+                    )
+                );
+            })
+        );
+    };
+
+    /********************************************************************
+    * Join
+    ********************************************************************/
+    var join = function (b) {
+        var index = 0;
+        var deleteOld = function () { return; };
+        return (
+            mk(function (f) {
+                return (
+                    b.listen(function (b) {
+                        deleteOld();
+                        deleteOld = b.listen(function (x) { f(x); });
+                    })
+                );
+            })
+        );
+    };
+
+    /********************************************************************
+    * Bind
+    ********************************************************************/
+    var bind = function (b, f) {
+        return join(map(f, b));
+    };
+
+    /********************************************************************
+    * Create a behavior from a listen.
+    ********************************************************************/
+    var mk = function (listen) {
+        return (
+            {
+                // Listen
+                listen: listen,
+
+                // Map 
+                map: function (f) {
+                    return map(f, this);
+                },
+
+                // Bind
+                bind: function (f) {
+                    return bind(this, f);
+                }
             }
-        };
-        
-    // Returns a behaviour and a trigger.
-    var withTrigger = 
-        function(init){
-            // Keeps track of the current value.
-            var currValue = init;
-            
-            // List of subscribers.
-            var subscribers = []
+        );
+    };
+
+
+    this.B = {
+
+        /********************************************************************
+        *
+        ********************************************************************/
+        // Lifts a value into a behavior.
+        lift: function (x) {
+            return (
+                mk(function (f) {
+                    f(x);
+                    return function () { };
+                })
+            );
+        },
+
+
+        toJson: toJson,
+
+        /********************************************************************
+        *
+        ********************************************************************/
+        withTrigger: function (init) {
+
+            var subIx = 0;
+            var currentValue = init;
+
+            var subscribers = {};
 
             // Subscribe to behavior.
-            var listen =
-                function (f) {
-                    // First call with current value.
-                    f(currValue);
-                    
-                    // Add to subscribers list
-                    subscribers.push(f);
-                    
-                };
-                        
+            var listen = function (f) {
+
+                // Increase subscriber index
+                subIx = subIx + 1;
+
+                // First call with current value.
+                f(currentValue);
+
+                // Add to subscribers list
+                subscribers[subIx] = f;
+                var currSubIx = subIx;
+                return (
+                    function () {
+                        // Delete on unsubscribe.
+                        delete subscribers[currSubIx];
+                    }
+                );
+            }
+
             // Trigger new value.
             var trigger =
                 function (x) {
-                    currValue = x;
-                    for(i = 0; i < subscribers.length; i++){
-                        subscribers[i](currValue);
+                    // Update current value.
+                    currentValue = x;
+                    for (var field in subscribers) {
+                        if (typeof subscribers[field] === "function") {
+                            subscribers[field](currentValue);
+                        }
                     }
-                };            
-            return {
-                behavior : {listen  : listen},
-                trigger : trigger
-            };
-
-        };                            
-     
-    // Maps over a behavior.
-    var map =
-        function(f,b) {
-            return {
-                listen : 
-                    function(g){
-                        b.listen(
-                            function(x) {
-                                g(f(x));
-                            }
-                        );
-                    }
-            };
-        };     
-
-    // Join            
-    var join =
-        function(b){
-            var index = 0;
-            return {
-                listen : 
-                    function(f) {
-                        b.listen(function(bCurr) {
-                            index = index + 1;
-                            var currIndex = index;
-                            bCurr.listen(function(x) {
-                                if(currIndex = index) {
-                                    f(x);    
-                                }                        
-                            });
-                        });
-                    }                
-            }
-        };
-    // Bind, defined using map and join.
-    var bind =
-        function(b,f) {
-            return join(map(f,b));
+                };
+            var b = mk(listen);
+            b.trigger = trigger;
+            return b;
         }
-     
-    // Add to the global namespace B.
-    this.B = {
-        ret : ret,
-        withTrigger : withTrigger,
-        map : map,
-        join : join,
-        bind : bind
-    };
+    }
+
 })();
-
-
