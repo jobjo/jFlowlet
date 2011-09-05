@@ -1,81 +1,94 @@
 (function () {
 
-    /********************************************************************
-    * Create a behavior from a listen.
-    ********************************************************************/
-    var mk = function (listen) {
-        return (
-            {
-                // Listen
-                listen: listen,
-
-                // Map 
-                map: function (f) {
-                    return map(f, this);
-                },
-
-                // Bind
-                bind: function (f) {
-                    return bind(this, f);
-                }
-            }
-        );
-    };
-
-    /********************************************************************
-    * Maps over a behavior.
-    ********************************************************************/
-    var map = function (f, b) {
-        return (
-            mk(function (g) {
-                return (
-                    b.listen(
-                        function (x) {
-                            g(f(x));
-                        }
-                    )
-                );
-            })
-        );
-    };
-
-    /********************************************************************
-    * Join
-    ********************************************************************/
-    var join = function (b) {
-        var index = 0;
-        var deleteOld = function () { return; };
-        return (
-            mk(function (f) {
-                return (
-                    b.listen(function (b) {
-                        deleteOld();
-                        deleteOld = b.listen(function (x) { f(x); });
-                    })
-                );
-            })
-        );
-    };
-
-    /********************************************************************
-    * Bind
-    ********************************************************************/
-    var bind = function (b, f) {
-        return join(map(f, b));
-    };
-
-
 
 
     this.B = {
-
+        
+        
+        /********************************************************************
+        * Create a behavior from a listen.
+        ********************************************************************/
+        mk : function (listen) {
+            var B = this;
+            
+            return (
+                {
+                    // Listen
+                    listen: listen,
+    
+                    // Map 
+                    map: function (f) {
+                        return B.map(f, this);
+                    },
+    
+                    // Bind
+                    bind: function (f) {
+                        return B.bind(this, f);
+                    }
+                }
+            );
+        },
+        
+        
+        /********************************************************************
+        * Join
+        ********************************************************************/
+        join : function (bOut) {
+            
+            var B = this;
+            var index = 0;
+            var deleteOld = function () { };
+            return (
+                B.mk(function (f) {
+                    return (
+                        bOut.listen(function (b) {
+                            deleteOld();
+                            console.log("BBBBBBBBBBBBBBBBBB", b);
+                            
+                            deleteOld = b.listen(f);
+                        })
+                    );
+                })
+            );
+        },
+        
+        
+        /********************************************************************
+        * Maps over a behavior.
+        ********************************************************************/
+        map : function (f, b) {
+            var B = this;
+            return (
+                B.mk(function (g) {
+                    return (
+                        b.listen(
+                            function (x) {
+                                g(f(x));
+                            }
+                        )
+                    );
+                })
+            );
+        },
+        
+        
+        /********************************************************************
+        * Bind
+        ********************************************************************/
+        bind : function (b, f) {
+            var B = this;
+            return B.join(B.map(f, b));
+        },
+        
+        
         /********************************************************************
         *
         ********************************************************************/
         // Lifts a value into a behavior.
         lift: function (x) {
+            var B = this;
             return (
-                mk(function (f) {
+                B.mk(function (f) {
                     f(x);
                     return function () { };
                 })
@@ -87,6 +100,7 @@
         ********************************************************************/
         withTrigger: function (init) {
 
+            var B = this;
             var subIx = 0;
             var currentValue = init;
 
@@ -123,7 +137,9 @@
                         }
                     }
                 };
-            var b = mk(listen);
+            
+            
+            var b = B.mk(listen);
             b.trigger = trigger;
             return b;
         }

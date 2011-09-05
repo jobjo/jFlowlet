@@ -1,10 +1,20 @@
 $(document).ready(function(){
+    
+    
 
 
     
     module("Module Behaviour");
+    
+    test("Test lift", function() {
+        var out = "";
+        B.lift("hello").listen(function(x){
+            out = "hello";
+        });
+        deepEqual("hello", out);
+    });
 
-    test("Test with trigger", function() {  
+    test("Test with trigger - Undefined", function() {  
         var b = B.withTrigger();
         var out = [];
         b.listen(function(x){
@@ -50,51 +60,70 @@ $(document).ready(function(){
     });
 
     test("Test join", function() {  
+        
         var b1 = B.withTrigger("B1:1");
         var b2 = B.withTrigger("B2:1");
         var b3 = B.withTrigger("B3:1");
         
         var b = B.withTrigger(b1);
         
-        var out = []
+        var out = [];
+
         B.join(b).listen(function(x) {
             console.log(x);
             out.push(x);
         });
         
         
-        // b1.trigger("B1:2");
-        // b1.trigger("B1:3");
+        b1.trigger("B1:2");
+        b1.trigger("B1:3");
         
-        // b.trigger(b2);
-        // b2.trigger("B2:2");
+        b.trigger(b2);
+        b2.trigger("B2:2");
         
-        // b.trigger(b3);
-        // b3.trigger("B3:2");
-        // b3.trigger("B3:3");
+        b.trigger(b3);
+        b3.trigger("B3:2");
+        b3.trigger("B3:3");
         
-        // b1.trigger("B1:4");
-        // b2.trigger("B2:3");
+        b1.trigger("B1:4");
+        b2.trigger("B2:3");
         
-        
+        deepEqual(out, ["B1:1", "B1:2", "B1:3", "B2:1", "B2:2", "B3:1", "B3:2", "B3:3" ], "");
 
     });
 
+
+    test("Test map", function() {  
+        var b1 = B.withTrigger(1);
+        var b2 = b1.map(function(x) {
+            return (x * x);        
+        });
+        var out = [];    
+        b2.listen(function(x) {
+            out.push(x);
+        });
+        
+        b1.trigger(2);
+        b1.trigger(3);
+        deepEqual(out, [1,4,9], "");
+        
+        
+    });
 
     test("Test bind", function() {  
         var b1 = B.withTrigger(1);
         var b2 = b1.bind(function(x) {
-            return (x * x);        
+            return B.lift(x * x);        
         });
+        var out = [];                
         b2.listen(function(x) {
-            console.log(x);
+            out.push(x);
         });
-        console.log(b2);
-        ok(true);
+        b1.trigger(2);
+        b1.trigger(3);
+        deepEqual(out, [1, 4,9], "");
         
-
     });
-
 
 
     
