@@ -1,6 +1,28 @@
 (function () {
 
     /********************************************************************
+    * Create a behavior from a listen.
+    ********************************************************************/
+    var mk = function (listen) {
+        return (
+            {
+                // Listen
+                listen: listen,
+
+                // Map 
+                map: function (f) {
+                    return map(f, this);
+                },
+
+                // Bind
+                bind: function (f) {
+                    return bind(this, f);
+                }
+            }
+        );
+    };
+
+    /********************************************************************
     * Maps over a behavior.
     ********************************************************************/
     var map = function (f, b) {
@@ -42,27 +64,7 @@
         return join(map(f, b));
     };
 
-    /********************************************************************
-    * Create a behavior from a listen.
-    ********************************************************************/
-    var mk = function (listen) {
-        return (
-            {
-                // Listen
-                listen: listen,
 
-                // Map 
-                map: function (f) {
-                    return map(f, this);
-                },
-
-                // Bind
-                bind: function (f) {
-                    return bind(this, f);
-                }
-            }
-        );
-    };
 
 
     this.B = {
@@ -108,7 +110,7 @@
                         delete subscribers[currSubIx];
                     }
                 );
-            }
+            };
 
             // Trigger new value.
             var trigger =
@@ -125,6 +127,6 @@
             b.trigger = trigger;
             return b;
         }
-    }
+    };
 
 })();
