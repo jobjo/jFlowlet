@@ -1,37 +1,42 @@
 (function () {
 
+    // Create a new behavior from a listener.
+    var mk = function (listen) {
+        var B = this.B;
+        var current;
+        listen(function(x) {
+            current = x;
+        });
+        return (
+            {
+                current : function() {
+                    return current;
+                },
+                
+                listen: listen,
+                
+                map: function (f) {
+                    return B.map(f, this);
+                },
+                
+                bind: function (f) {
+                    return B.bind(this, f);
+                },
+                
+                apply : function(b) {
+                    return B.apply(this, b);
+                }                
+            }
+        );
+    };
 
 
     this.B = {
-        
-        
-        /********************************************************************
-        * Create a behavior from a listen.
-        ********************************************************************/
-        mk : function (listen) {
-            var B = this;
-            
-            return (
-                {
-                    // Listen
-                    listen: listen,
-    
-                    // Map 
-                    map: function (f) {
-                        return B.map(f, this);
-                    },
-    
-                    // Bind
-                    bind: function (f) {
-                        return B.bind(this, f);
-                    }
-                }
-            );
-        },
-        
-        
+
         /********************************************************************
         * Join
+        * @param {Behavior} Behavior of behavior to be merged.
+        * @return {Behavior} 
         ********************************************************************/
         join : function (bOut) {
             
@@ -39,12 +44,10 @@
             var index = 0;
             var deleteOld = function () { };
             return (
-                B.mk(function (f) {
+                mk(function (f) {
                     return (
                         bOut.listen(function (b) {
                             deleteOld();
-                            console.log("BBBBBBBBBBBBBBBBBB", b);
-                            
                             deleteOld = b.listen(f);
                         })
                     );
@@ -59,7 +62,7 @@
         map : function (f, b) {
             var B = this;
             return (
-                B.mk(function (g) {
+                mk(function (g) {
                     return (
                         b.listen(
                             function (x) {
@@ -80,23 +83,49 @@
             return B.join(B.map(f, b));
         },
         
-        
+
         /********************************************************************
-        *
+        * Apply
+        ********************************************************************/
+        apply : function (bF, b) {
+            var B = this;
+            
+            var bOut = 
+                B.withTrigger(bF.current()(b.current));
+            
+            bF.listen(function(f) {
+                bOut.trigger(f(b.current()));
+            });
+            
+            b.listen(function(x){
+               bOut.trigger(bF.current()(x));
+            });
+            
+            return (
+                mk(function(f) {
+                    return bOut.listen(f);                    
+                })
+            );
+        },
+
+
+        /********************************************************************
+        * Create a behavior that when subscribed to 
+        * @param {Value} The value to be lifted.
         ********************************************************************/
         // Lifts a value into a behavior.
         lift: function (x) {
             var B = this;
             return (
-                B.mk(function (f) {
+                mk(function (f) {
                     f(x);
                     return function () { };
                 })
             );
         },
-
+        
         /********************************************************************
-        *
+        * @param {Value} Initial value
         ********************************************************************/
         withTrigger: function (init) {
 
@@ -139,7 +168,7 @@
                 };
             
             
-            var b = B.mk(listen);
+            var b = mk(listen);
             b.trigger = trigger;
             return b;
         }

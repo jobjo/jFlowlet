@@ -2,7 +2,7 @@
 * 
 **********************************************************************/
 (function(){
-    var ELEMENT_TYPE = "Element"
+    var ELEMENT_TYPE = "Element";
     var id = 0;
     this.E = {
    
@@ -95,7 +95,7 @@
                     }                    
                     
                     // Add attributes
-                    if(attrs.attrs != undefined) {
+                    if(attrs.attrs !== undefined) {
                         for(name in attrs.attrs) {
                             elem.attr(name, attrs.attrs[name]);
                         }
@@ -112,14 +112,13 @@
                     }
 
                     // Add events
-                    if(attrs.events != undefined) {
+                    if(attrs.events !== undefined) {
                         for(name in attrs.events) {
                             elem.bind(name, attrs.events[name]);
                         }                                    
                     }
                     
                     // Append all children
-                    console.log("attrs.children", attrs.children);
                     attrs.children.map(function(child) {
                         if (child.type === ELEMENT_TYPE) {                                    
                             child.renderTo(elem, 0);

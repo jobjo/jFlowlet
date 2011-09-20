@@ -6,11 +6,13 @@
     * @state - form state
     *************************************************************************/
 
-    var ERROR_TYPE = "ERROR_TYPE"
+    var ERROR_TYPE = "ERROR_TYPE";
     
-    var mkForm = undefined;
+    var mkForm;
+    
     var mkFormFun =
         function(layout, state, notify, update) {
+            
             
             var listen = function(f) {
                 state.listen(f);
@@ -20,10 +22,10 @@
                 // Subscribe to state
                 state.listen(function(){});
                 layout.renderTo(parent);
-            };
-                
+            };            
+            
             var bind = function(f) {                    
-                var oldForm = undefined;                    
+                var oldForm;                    
                 var state2 =                    
                     B.bind(state, function(x) {
                         
@@ -31,7 +33,7 @@
                         var form = f(x);
                         
                         // Remove old
-                        if( oldForm != undefined) {
+                        if( oldForm !== undefined) {
                             oldForm.layout.remove();
                         }
                         oldForm = form;
@@ -54,6 +56,21 @@
                                 
                 bind : bind,
                 
+                apply : function(f) {
+                    var state = this.state.apply(f.state);
+                    this.layout.append(f.layout);
+                    var notify = function(x) {
+                        this.notify(x);
+                        f.notify(x);
+                    };
+                    var update = function() {
+                        this.update();
+                        f.update();
+                    };
+                    
+                    return mkForm (layout, state, notify, update);
+                },
+                
                 notify : notify,
                 
                 update : update,               
@@ -61,6 +78,7 @@
                 reset : function() {
                     this.notify();
                 },
+                                
                 
                 append : function(form, f) {
                     var layout = this.layout;                    
@@ -129,8 +147,8 @@
                     this.layout.withContainer(function() {
                         return {
                             inner : arg.inner,
-                            outer : arg.outer,
-                        }
+                            outer : arg.outer
+                        };
                     });
                     this.layout.addWrapper(arg.wrapper);
                 },
@@ -195,7 +213,7 @@
                                 inner : inner
                             };                                           
                         })
-                    )
+                    );
                 },
                 
                 horizontal : function() {
@@ -229,10 +247,8 @@
                                 inner : inner
                             };                                           
                         })
-                    )
-                }                
-                
-                
+                    );
+                }
             };
         };    
     mkForm = mkFormFun;        
@@ -242,15 +258,44 @@
     * @value - value to be lifted.
     * @return form with constant state and empty body.
     *************************************************************************/    
-    var ret =
+    var lift =
         function(x) {
-            var state = B.ret(x);
+            var state = B.lift(x);
             return mkForm(L.mk(), state);
         };
 
     this.F = {
         mkForm : mkForm,
-        ret : ret
+        
+        lift : lift,
+        
+        compose : function() {
+            var F = this;
+            
+            var f = arguments[0];
+            
+            var layout = arguments[1].layout;
+            
+            for (var ix = 2; ix < arguments.length; ix++) {
+                layout.append(arguments[ix].layout);
+            }
+            
+            var notify = function(x) {
+                for(var ix = 1; ix < arguments.length; ix++) {
+                    arguments[ix].notify();
+                }
+            };
+            
+            var update = function () {
+                for (var ix = 1; ix < arguments.length; ix++) {
+                    arguments[ix].update();
+                }
+            };
+            
+            
+        }
+        
+        
     };
     
 })();

@@ -3,7 +3,8 @@
 **********************************************************************/
 (function(){
 
-    var LAYOUT_TYPE = "Layout"    
+    var LAYOUT_TYPE = "Layout";
+    
     var id = 0;
     var mkSingle = function(siblings) {
         id = id + 1;
@@ -14,26 +15,25 @@
             }
                     
         // State variables
-        var parentLayout = undefined;
+        var parentLayout;
         
         // Node to which the layout is rendered.
-        var containerNode = undefined;        
+        var containerNode;
         
         // Element to which the children are rendered.
-        var containerElement = undefined;
+        var containerElement;
                 
         // Label
-        var label = undefined;
+        var label;
         
         var isRendered = false;        
         var renderedElements = [];
         
         // Function defining wrapping of elements.
-        var elementWrapper = undefined;
+        var elementWrapper;
         
         // Returns element wrapper.
         var wrapElement = function(el, label) {
-            console.log("LABEL", label);
             // Get parent wrapper
             if (containerElement === undefined && parentLayout !== undefined) {
                 if (elementWrapper === undefined) {
@@ -61,7 +61,7 @@
                 }
             }
         };        
-        
+
         // Sets the parent layout.
         var setParentLayout = function (pl) {
             if (parentLayout === undefined) {
@@ -74,7 +74,7 @@
         
         var setContainerNode = function (node) {
             containerNode = node;
-        }
+        };
         
         var getContainerNode = function() {            
             // First check container
@@ -86,7 +86,6 @@
                     return containerNode;
                 }
                 else {
-                    console.log("B");
                     return parentLayout.getContainerNode();
                 }    
             }
@@ -100,10 +99,9 @@
                     return wrapper (old (el,label));
                 }
                 else {
-                    console.log("L", label);
                     return wrapper(el, label);
                 }
-            }
+            };
         };
               
         // Get list of leaf elements.
@@ -161,6 +159,15 @@
                 label = l;
             },
             
+            getRenderedElements : function () {
+                if (renderedElements !== undefined) {
+                    return renderedElements;
+                }
+                else {
+                    return [];
+                }
+            },
+            
             setRendered : function () {
                 isRendered = true;
                 $(siblings).each(function(ix,sibling) {
@@ -194,7 +201,7 @@
                 var count = 0;
                 for (var i = 0; i < siblings.length; i++) {
                     var sibId = siblings[i].id;
-                    count += siblings[i].numElements()
+                    count += siblings[i].numElements();
                 }
                 return count;
             },
@@ -204,7 +211,7 @@
                 containerElement = f ();
                 this.getOffset = function () {
                     return 0;
-                }
+                };
             },
             
             /***********************************************************
@@ -219,7 +226,6 @@
                 
                 // Set the parent layout of the sibling
                 if (sibling.type === LAYOUT_TYPE) {
-                    console.log("set parent layout of ", sibling.id, " to ",  this.id);
                     sibling.setParentLayout(this);
                 }
                 
@@ -241,8 +247,7 @@
                     function () {
                         var count = 0;
                         var i = 0;
-                        while (sibling[i] != undefined 
-                                && sibling[i].id !== sibling.id) { 
+                        while (sibling[i] !== undefined && sibling[i].id !== sibling.id) { 
                             count += siblings[i].numElements();
                             i = i + 1;
                         }
@@ -253,7 +258,6 @@
                 // If layout is rendered, then render teh layout to
                 // the parent element.
                 if(isRendered) {
-                    console.log("isRender -> getContainerNode()", getContainerNode());
                     sibling.renderTo(getContainerNode());
                 }                    
                 
@@ -274,7 +278,6 @@
                 });                                                      
                 
                 for (var ix = 0; ix < renderedElements.length; ix++) {
-                    console.log("REMOVE");
                     renderedElements[ix].remove();
                 }
                 siblings = [];
@@ -351,23 +354,45 @@
                 
                 return count;
             }
-        }
+        };
     };    
     
     this.L = {
         
-        mk : mkSingle,          
-        mk2 :
-            function (elems) {
+        /***********************************************************
+         *
+         ***********************************************************/        
+        mk : mkSingle,   
+
+        /***********************************************************
+         *
+         ***********************************************************/
+        mk2 : function (elems) {
                 var lastLayout = mkSingle();
-                $(elems).each(function(ix, elem) {
+                elems.map (function(elem, ix) {
                     var l = mkSingle(elem.Name, elem.Attrs, elem.Events);
-                    if (lastLayout != undefined) {
+                    if (lastLayout !== undefined) {
                         lastLayout.append(l);
                     }
                     
                 });
                 return lastLayout;
-            }
-    }
-})()
+            },
+        
+        
+        /***********************************************************
+         *
+         ***********************************************************/                    
+        sequence : function(layouts) {
+            var layout;
+            layouts.map (function(l) {
+                if (layout === undefined) {
+                    layout = l;
+                } else {
+                    layout.append(l);
+                }
+            });
+            return layout;
+        }
+    };
+})();
