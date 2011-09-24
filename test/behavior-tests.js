@@ -219,19 +219,28 @@ $(document).ready(function(){
         
     });
 
-    test("Test sequence", function() {  
+    test("Test combine", function() {  
         
         var b1 = B.withTrigger("A:1");
         var b2 = B.withTrigger("B:1");
         var b3 = B.withTrigger("C:1");
-        var b = B.sequence ([b1, b2, b3]);
+        var b = 
+            B.combine (
+                function (x,y,z) {
+                    return x + " " + y + " " + z;    
+                },
+                b1, b2, b3
+            );
+            
         var out = [];
         var dispose =
             b.listen(function(xs) {
                 out.push(xs);
             });
+            
+        deepEqual(b.current(), "A:1 B:1 C:1");
         
-        deepEqual(b.current(), ["A:1", "B:1", "C:1"], "");
+              
         b1.trigger("A:2");
         b2.trigger("B:2");
         b3.trigger("C:2");
@@ -239,12 +248,13 @@ $(document).ready(function(){
         b3.trigger("C:3");
         deepEqual(out, 
             [
-                ["A:1", "B:1", "C:1"], 
-                ["A:2", "B:1", "C:1"],
-                ["A:2", "B:2", "C:1"],
-                ["A:2", "B:2", "C:2"]
+                "A:1 B:1 C:1", 
+                "A:2 B:1 C:1",
+                "A:2 B:2 C:1",
+                "A:2 B:2 C:2"
             ]
         );
+        
     });
 
 });

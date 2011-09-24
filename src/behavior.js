@@ -21,11 +21,7 @@
                 
                 bind: function (f) {
                     return B.bind(this, f);
-                },
-                
-                apply : function(b) {
-                    return B.apply(this, b);
-                }                
+                }
             }
         );
     };
@@ -123,6 +119,55 @@
                 })
             );
         },
+        
+        /********************************************************************
+        * TODO
+        * @param {Function}
+        ********************************************************************/
+        combine: function () {
+            var B = this;
+            var f = arguments[0];
+            console.log("arguments", arguments);
+            var bs = Array.prototype.slice.call(arguments, 1);
+            
+            // Computes the current composed value.
+            var current = function () { 
+                var val =
+                    f.apply(
+                        this, 
+                        bs.map (function(b) {
+                            return b.current ();
+                        })
+                    );
+                return val;                    
+            };
+            
+            var bOut = B.withTrigger(current ());
+            
+            var disposes = bs.map (function (b) {
+                var dispose = b.listen (function (x) {
+                    bOut.trigger ( current ());
+                });
+                return dispose;
+            });
+            
+            var dispose = function () {
+                disposes.map (function (dispose) {
+                    dispose ();
+                });
+            };
+            
+            return (
+                mk (function (f) {
+                    var dispOut = bOut.listen (f);
+                    return ( function () {
+                        dispose ();
+                        dispOut ();
+                    });
+                })
+            );
+        },        
+        
         
         /********************************************************************
         * @param {Value} Initial value
