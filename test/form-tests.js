@@ -151,26 +151,39 @@ $(document).ready(function(){
         
     });
     
-    test("Test compose", function () {
+    test("Test combine", function () {
+        
+        var f1 = F.Control.input("A");
         
         var form =
-            F.compose (
+            F.combine (
                 function (x,y,z) { 
-                    return [x,y,z];
+                    return x + " " + y + " " + z;
                 },
-                
-                F.Control.input("A"),                
+                f1,
                 F.Control.input("B"),
                 F.Control.input("C")
             );
         
         render(form);
+        var f1Elem = form.layout.getRenderedElements()[0].jQuery;
         
         var out = [];
         form.listen(function(x) {
             out.push(x);
         });
-        equal(out, [["A", "B"]]);
+        
+        f1Elem.val("A:2");
+        form.update();
+        
+        
+        deepEqual(
+            out, 
+            [
+                "A B C",
+                "A:2 B C"
+            ]
+        );
         
         
     });

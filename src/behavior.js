@@ -21,6 +21,10 @@
                 
                 bind: function (f) {
                     return B.bind(this, f);
+                },
+                
+                blockWith : function(b) {
+                    return B.blockWith(b, this);
                 }
             }
         );
@@ -127,7 +131,6 @@
         combine: function () {
             var B = this;
             var f = arguments[0];
-            console.log("arguments", arguments);
             var bs = Array.prototype.slice.call(arguments, 1);
             
             // Computes the current composed value.
@@ -216,7 +219,41 @@
             var b = mk(listen);
             b.trigger = trigger;
             return b;
-        }
+        },
+        
+        /******************************************************************** 
+         * @param {Behavior<bool>} Behavior that filter the signal.
+         * @param {Behaviour} Input behavior
+         * @return {Behavior} Filtered behavio.
+         ********************************************************************/
+        blockWith: function (block, b) {
+            var B = this;
+            var bOut = B.withTrigger(b.current());
+            var dispB = b.listen(function (x) {
+                if (block.current ()) {
+                    bOut.trigger(x);
+                }
+            });
+            var currBlock = block.current ();
+            var dispBlock = block.listen(function (block) {
+                if (block && !currBlock) {
+                    bOut.trigger(b.current());
+                }
+                currBlock = block;
+            });
+
+            return (
+                mk(function (f) {
+                    var dispOut = bOut.listen(f);
+                    return (
+                        function () {
+                            dispOut ();
+                            dispB ();
+                        }
+                    );
+                })
+            );
+        }        
     };
 
 })();

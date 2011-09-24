@@ -96,7 +96,7 @@
                         form.update();
                     }; 
                     
-                    return mkForm(layout, state2, notify, update);                                       
+                    return mkForm(layout, state2, notify, update);
                 },
                 
                 map : function (f) {                    
@@ -269,30 +269,41 @@
         
         lift : lift,
         
-        compose : function() {
+        combine : function() {
             var F = this;
-            
             var f = arguments[0];
+            var fls = Array.prototype.slice.call(arguments, 1);
             
-            var layout = arguments[1].layout;
+            var block = B.withTrigger(true);
+            var state = 
+                    B.combine.apply(B, [f].concat (
+                        fls.map (function (fl) {
+                            return fl.state;
+                        })
+                    )
+                ).blockWith(block);
             
-            for (var ix = 2; ix < arguments.length; ix++) {
-                layout.append(arguments[ix].layout);
+            var layout = fls[0].layout;
+            for (var ix = 1; ix < fls.length; ix++) {
+                layout.append(fls[ix].layout);
             }
             
-            var notify = function(x) {
-                for(var ix = 1; ix < arguments.length; ix++) {
-                    arguments[ix].notify();
-                }
+            var notify = function() {
+                fls.map (function (fl) {
+                    fl.notify();
+                });
             };
             
             var update = function () {
-                for (var ix = 1; ix < arguments.length; ix++) {
-                    arguments[ix].update();
-                }
+                block.trigger(false);
+                fls.map (function (fl) {
+                    fl.update();
+                });
+                block.trigger(true);
             };
             
             
+            return F.mkForm(layout, state, notify, update);            
         }
         
         
