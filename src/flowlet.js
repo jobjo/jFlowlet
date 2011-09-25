@@ -1,4 +1,4 @@
-(function(){
+var Flowlet = (function(){
 
     /************************************************************************
     * Form factory method.
@@ -9,10 +9,8 @@
     var ERROR_TYPE = "ERROR_TYPE";
     
     var mkForm;
-    
     var mkFormFun =
         function(layout, state, notify, update) {
-            
             
             var listen = function(f) {
                 state.listen(f);
@@ -26,8 +24,8 @@
             
             var bind = function(f) {                    
                 var oldForm;                    
-                var state2 =                    
-                    B.bind(state, function(x) {
+                var state2 =                
+                    state.bind (function(x) {
                         
                         // Create new form 
                         var form = f(x);
@@ -101,7 +99,7 @@
                 
                 map : function (f) {                    
                     // FIXME: Update behavior to use instance method for map.
-                    var state2 = B.map(f, this.state);               
+                    var state2 =  state.map (f);
                     return (mkForm(layout, state2, notify, update));                
                 },
                 
@@ -259,11 +257,11 @@
     *************************************************************************/    
     var lift =
         function(x) {
-            var state = B.lift(x);
+            var state = Signal.lift(x);
             return mkForm(L.mk(), state);
         };
 
-    this.F = {
+    return {
         mkForm : mkForm,
         
         lift : lift,
@@ -273,9 +271,11 @@
             var f = arguments[0];
             var fls = Array.prototype.slice.call(arguments, 1);
             
-            var block = B.withTrigger(true);
+            var block = Signal.withTrigger(true);
             var state = 
-                    B.combine.apply(B, [f].concat (
+                Signal.combine.apply(                    
+                    Signal, 
+                    [f].concat (
                         fls.map (function (fl) {
                             return fl.state;
                         })
@@ -301,11 +301,8 @@
                 block.trigger(true);
             };
             
-            
             return F.mkForm(layout, state, notify, update);            
         }
-        
-        
     };
     
 })();

@@ -1,8 +1,12 @@
-(function () {
+/********************************************************************************
+ * Module Signal.
+ *
+ *******************************************************************************/
+var Signal = (function () {
 
     // Create a new behavior from a listener.
     var mk = function (listen) {
-        var B = this.B;
+        var S = this.Signal;
         var current;
         listen(function(x) {
             current = x;
@@ -16,22 +20,22 @@
                 listen: listen,
                 
                 map: function (f) {
-                    return B.map(f, this);
+                    return S.map(f, this);
                 },
                 
                 bind: function (f) {
-                    return B.bind(this, f);
+                    return S.bind(this, f);
                 },
                 
                 blockWith : function(b) {
-                    return B.blockWith(b, this);
+                    return S.blockWith(b, this);
                 }
             }
         );
     };
 
 
-    this.B = {
+    return {
 
         /********************************************************************
         * Join
@@ -39,8 +43,7 @@
         * @return {Behavior} 
         ********************************************************************/
         join : function (bOut) {
-            
-            var B = this;
+            var S = this;
             var index = 0;
             var deleteOld = function () { };
             return (
@@ -60,7 +63,6 @@
         * Maps over a behavior.
         ********************************************************************/
         map : function (f, b) {
-            var B = this;
             return (
                 mk(function (g) {
                     return (
@@ -79,8 +81,8 @@
         * Bind
         ********************************************************************/
         bind : function (b, f) {
-            var B = this;
-            return B.join(B.map(f, b));
+            var S = this;
+            return S.join(b.map(f, b));
         },
         
 
@@ -88,10 +90,10 @@
         * Apply
         ********************************************************************/
         apply : function (bF, b) {
-            var B = this;
+            var S = this;
             
             var bOut = 
-                B.withTrigger(bF.current()(b.current));
+                S.withTrigger(bF.current()(b.current));
             
             bF.listen(function(f) {
                 bOut.trigger(f(b.current()));
@@ -115,7 +117,7 @@
         ********************************************************************/
         // Lifts a value into a behavior.
         lift: function (x) {
-            var B = this;
+            var S = this;
             return (
                 mk(function (f) {
                     f(x);
@@ -129,7 +131,7 @@
         * @param {Function}
         ********************************************************************/
         combine: function () {
-            var B = this;
+            var S = this;
             var f = arguments[0];
             var bs = Array.prototype.slice.call(arguments, 1);
             
@@ -145,7 +147,7 @@
                 return val;                    
             };
             
-            var bOut = B.withTrigger(current ());
+            var bOut = S.withTrigger(current ());
             
             var disposes = bs.map (function (b) {
                 var dispose = b.listen (function (x) {
@@ -177,7 +179,7 @@
         ********************************************************************/
         withTrigger: function (init) {
 
-            var B = this;
+            var S = this;
             var subIx = 0;
             var currentValue = init;
 
@@ -227,8 +229,8 @@
          * @return {Behavior} Filtered behavio.
          ********************************************************************/
         blockWith: function (block, b) {
-            var B = this;
-            var bOut = B.withTrigger(b.current());
+            var S = this;
+            var bOut = S.withTrigger(b.current());
             var dispB = b.listen(function (x) {
                 if (block.current ()) {
                     bOut.trigger(x);
@@ -255,5 +257,4 @@
             );
         }        
     };
-
 })();

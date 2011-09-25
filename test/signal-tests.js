@@ -1,10 +1,12 @@
 $(document).ready(function(){
-
+    
+    var S = Signal;
+    
     module("Module Behaviour");
     
     test("Test lift", function() {
         var out = "";
-        var dispose = B.lift("hello").listen(function(x){
+        var dispose = S.lift("hello").listen(function(x){
             out = "hello";
         });
         
@@ -14,7 +16,7 @@ $(document).ready(function(){
     
 
     test("Test with trigger - Undefined", function() {  
-        var b = B.withTrigger();
+        var b = S.withTrigger();
         var out = [];
         b.listen(function(x){
             out.push(x);
@@ -26,7 +28,7 @@ $(document).ready(function(){
     });    
        
     test("Test with trigger", function() {  
-        var b = B.withTrigger("A");
+        var b = S.withTrigger("A");
         var out = [];
         b.listen(function(x){
             out.push(x);
@@ -40,7 +42,7 @@ $(document).ready(function(){
     });    
 
     test("Test dispose", function() {  
-        var b = B.withTrigger(1);
+        var b = S.withTrigger(1);
         var out = [];
         var dispose1 = b.listen(function(x){
             out.push(x);
@@ -59,15 +61,15 @@ $(document).ready(function(){
 
     test("Test join", function() {  
         
-        var b1 = B.withTrigger("B1:1");
-        var b2 = B.withTrigger("B2:1");
-        var b3 = B.withTrigger("B3:1");
+        var b1 = S.withTrigger("B1:1");
+        var b2 = S.withTrigger("B2:1");
+        var b3 = S.withTrigger("B3:1");
         
-        var b = B.withTrigger(b1);
+        var b = S.withTrigger(b1);
         
         var out = [];
 
-        B.join(b).listen(function(x) {
+        S.join(b).listen(function(x) {
             out.push(x);
         });
         
@@ -102,7 +104,7 @@ $(document).ready(function(){
 
 
     test("Test map", function() {  
-        var b1 = B.withTrigger(1);
+        var b1 = S.withTrigger(1);
         var b2 = b1.map(function(x) {
             return (x * x);        
         });
@@ -121,9 +123,9 @@ $(document).ready(function(){
 
 
     test("Test bind", function() {  
-        var b1 = B.withTrigger(1);
+        var b1 = S.withTrigger(1);
         var b2 = b1.bind(function(x) {
-            return B.lift(x * x);        
+            return S.lift(x * x);        
         });
         var out = [];                
         b2.listen(function(x) {
@@ -136,13 +138,13 @@ $(document).ready(function(){
     });
     
     test("Test nested bind", function() {  
-        var b1 = B.withTrigger(1);
+        var b1 = S.withTrigger(1);
         
         var b2 = b1.bind(function(x) {
             var b = 
-                B.lift(x * x)
+                S.lift(x * x)
                 .bind (function(x) {
-                    return B.lift(x*x);
+                    return S.lift(x*x);
                 });
             return b;                
             
@@ -159,9 +161,9 @@ $(document).ready(function(){
     });    
 
     test("Test bind and dispose", function() {  
-        var b1 = B.withTrigger(1);
+        var b1 = S.withTrigger(1);
         var b2 = b1.bind(function(x) {
-            return B.lift(x * x);        
+            return S.lift(x * x);        
         });
         var out = [];                
         var dispose = b2.listen(function(x) {
@@ -178,12 +180,12 @@ $(document).ready(function(){
     
     test("Test apply", function() {  
         
-        var bf = B.lift(function(x){
+        var bf = S.lift(function(x){
             return x * x;
         });
         
-        var bx = B.withTrigger(1);        
-        var b = B.apply(bf, bx);
+        var bx = S.withTrigger(1);        
+        var b = S.apply(bf, bx);
         var out = [];
         var dispose = b.listen(function(x) {
             out.push(x);
@@ -197,12 +199,12 @@ $(document).ready(function(){
 
     test("Test apply with dispose", function() {  
         
-        var bf = B.lift(function(x){
+        var bf = S.lift(function(x){
             return x * x;
         });
         
-        var bx = B.withTrigger(1); 
-        var b = B.apply(bf, bx);
+        var bx = S.withTrigger(1); 
+        var b = S.apply(bf, bx);
         var out = [];
         
         var dispose = b.listen(function(x) {
@@ -221,11 +223,11 @@ $(document).ready(function(){
 
     test("Test combine", function() {  
         
-        var b1 = B.withTrigger("A:1");
-        var b2 = B.withTrigger("B:1");
-        var b3 = B.withTrigger("C:1");
+        var b1 = S.withTrigger("A:1");
+        var b2 = S.withTrigger("B:1");
+        var b3 = S.withTrigger("C:1");
         var b = 
-            B.combine (
+            S.combine (
                 function (x,y,z) {
                     return x + " " + y + " " + z;    
                 },

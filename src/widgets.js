@@ -1,5 +1,5 @@
-(function() {
-    this.F.Control = {            
+Flowlet.Widgets = (function() {
+    return {            
             
         /******************************************************************
          * 
@@ -14,7 +14,7 @@
             }
             
             // State of the input 
-            var state = B.withTrigger(defValue);
+            var state = Signal.withTrigger(defValue);
                             
             // Input element                     
             var layout = L.mk();
@@ -50,7 +50,7 @@
                 update();
             };
             
-            return F.mkForm(layout, state, notify, update);
+            return Flowlet.mkForm(layout, state, notify, update);
         },
 
 
@@ -66,7 +66,7 @@
             }
             
             // State of the input 
-            var state = B.withTrigger(defValue);
+            var state = Signal.withTrigger(defValue);
             
             // Input element                     
             var layout = L.mk();
@@ -100,7 +100,7 @@
             };                
             
             layout.append(elem);
-            return F.mkForm(layout, state, notify, update);
+            return Flowlet.mkForm(layout, state, notify, update);
         },
         
 
@@ -114,7 +114,7 @@
             }
             
             var defValue = values[defIx].value;
-            var state = B.withTrigger(defValue);
+            var state = Signal.withTrigger(defValue);
             
             var elem;
             
@@ -160,10 +160,9 @@
                 update();
             };                
             
-            return F.mkForm(layout, state, notify, update);        
+            return Flowlet.mkForm(layout, state, notify, update);        
         }
         
     };
-    
     
 })();

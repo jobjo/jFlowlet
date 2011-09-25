@@ -1,9 +1,5 @@
 $(document).ready(function(){
 
-    // Some shortcuts
-    var i = F.Control.input;
-    var s = F.Control.select;
-    var t = F.Control.textArea;
     
     
     var render = function(f) {
@@ -27,7 +23,7 @@ $(document).ready(function(){
         
         
         var form = 
-            F.Control.select(
+            Flowlet.Widgets.select(
                 2,
                 [
                     {name : "Label A", value : "A"},
@@ -58,7 +54,7 @@ $(document).ready(function(){
 
     test("Test input", function() {
         
-        var form = F.Control.input("A");
+        var form = Flowlet.Widgets.input("A");
         render(form);
         var elem = form.layout.getRenderedElements()[0].jQuery;
         
@@ -83,7 +79,7 @@ $(document).ready(function(){
     
     test("Test textarea", function() {
         
-        var form = F.Control.textArea("A");
+        var form = Flowlet.Widgets.textArea("A");
         render(form);
         var elem = form.layout.getRenderedElements()[0].jQuery;
 
@@ -110,9 +106,9 @@ $(document).ready(function(){
     test("Test bind", function () {
         
         var form = 
-            F.Control.input("A")
+            Flowlet.Widgets.input("A")
             .bind(function (x) {
-                return F.Control.input(x+x);
+                return Flowlet.Widgets.input(x+x);
             });
         render(form);
         
@@ -129,12 +125,12 @@ $(document).ready(function(){
     
     test("Test nested bind", function () {
         var form =
-            F.Control.input("A")
+            Flowlet.Widgets.input("A")
             .bind(function (x) {
                 var form =
-                    F.Control.input(x+x)
+                    Flowlet.Widgets.input(x+x)
                     .bind(function(x) {
-                        return F.Control.input(x+x);
+                        return Flowlet.Widgets.input(x+x);
                     });
                 return form;                    
             });
@@ -153,16 +149,16 @@ $(document).ready(function(){
     
     test("Test combine", function () {
         
-        var f1 = F.Control.input("A");
+        var f1 = Flowlet.Widgets.input("A");
         
         var form =
-            F.combine (
+            Flowlet.combine (
                 function (x,y,z) { 
                     return x + " " + y + " " + z;
                 },
                 f1,
-                F.Control.input("B"),
-                F.Control.input("C")
+                Flowlet.Widgets.input("B"),
+                Flowlet.Widgets.input("C")
             );
         
         render(form);
