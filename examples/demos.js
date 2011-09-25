@@ -26,7 +26,21 @@ $(document).ready (function () {
     
     
     
-    demo1.horizontal().renderTo($("#demos"));  
+    // demo1.horizontal().renderTo($("#demos"));  
+    
+    var f =Flowlet.Widgets.input("");
+    f.container.withContainer(function() {
+        return {
+            inner : E.mk("span"),
+            outer : E.mk("table")
+        };
+    });
+    
+
+    var f =Flowlet.Widgets.input("");
+    f.withLabel("Label");
+    f.horizontalTable();
+    f.renderTo($("#demos"));
     
     
     

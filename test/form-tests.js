@@ -41,7 +41,7 @@ $(document).ready(function(){
         equal(form.state.current(), "B", "");
         
         // Select next
-        var elem = form.layout.getRenderedElements()[0].jQuery;
+        var elem = form.container.getRenderedElements()[0].jQuery;
         elem.find('option:nth-child(3)').attr("selected", true);
         
         form.update();
@@ -56,7 +56,7 @@ $(document).ready(function(){
         
         var form = Flowlet.Widgets.input("A");
         render(form);
-        var elem = form.layout.getRenderedElements()[0].jQuery;
+        var elem = form.container.getRenderedElements()[0].jQuery;
         
         equal(form.state.current(), "A", "");
         equal(elem.val(), "A", "Value from text box field matching the state");
@@ -81,7 +81,7 @@ $(document).ready(function(){
         
         var form = Flowlet.Widgets.textArea("A");
         render(form);
-        var elem = form.layout.getRenderedElements()[0].jQuery;
+        var elem = form.container.getRenderedElements()[0].jQuery;
 
         equal(form.state.current(), "A", "");
         equal(elem.val(), "A", "Value from text box field matching the state");
@@ -162,7 +162,7 @@ $(document).ready(function(){
             );
         
         render(form);
-        var f1Elem = form.layout.getRenderedElements()[0].jQuery;
+        var f1Elem = form.container.getRenderedElements()[0].jQuery;
         
         var out = [];
         form.listen(function(x) {
@@ -183,19 +183,18 @@ $(document).ready(function(){
         
     });
     
-    
     test("Test extend", function () {    
         
         Flowlet.Factory.extend(
                 {
                     goodMorning : function () {
-                        this.state.list
                         return "Good morning";
                     }
                 }
         );
         
         var f = Flowlet.Widgets.input ("Hello");
+        
         deepEqual(f.goodMorning (), "Good morning");
         
     
