@@ -108,29 +108,36 @@
         var getElementList = function () {        
             elems = [];            
             if(containerElement !== undefined) {
-                $(siblings).each(function(ix, sibling) {            
+                siblings.map(function(sibling, ix) {            
                     if(sibling.type === LAYOUT_TYPE) {
                         $(sibling.getElementList()).each(function(ix,elem) {
                             containerElement.inner.append(elem);    
                         });
                     }
                     else {
-                        containerElement.inner.append(wrapElement(sibling));
+                        containerElement.
+                        inner.
+                        append( wrapElement(sibling, label));
                     }
                 });
+                
+                
                 // Include parent layout wrapper
                 if (parentLayout !== undefined) {
                     renderedElements =
-                        [parentLayout.wrapElement(containerElement.outer, label)];
+                        [
+                            parentLayout.wrapElement(
+                                containerElement.outer, label
+                            )
+                        ];
                 }   
                 else {
                     renderedElements = [containerElement.outer];
                 }
-
             }
             else {                
                 // No container element.
-                $(siblings).each(function(ix, sibling) {
+                siblings.map (function (sibling) {
                     if(sibling.type === LAYOUT_TYPE) {
                         elems = 
                             elems.concat(sibling.getElementList());
@@ -206,7 +213,9 @@
                 return count;
             },
             
-
+            /***********************************************************
+            * @return Offset
+            ***********************************************************/                                                            
             withContainer : function(f) {
                 containerElement = f ();
                 this.getOffset = function () {
@@ -339,12 +348,11 @@
                     offset = this.getOffset();
                 }                            
                 
-                                
                 // Keep track of the total number of sub elements.
                 var count = 0;
                 
                 // Render leaf elements.
-                $(getElementList()).each(function(ix,element) {
+                (getElementList()).map (function (element) {
                     element.renderTo(containerNode, offset + count);
                     count = count + 1;                    
                 });

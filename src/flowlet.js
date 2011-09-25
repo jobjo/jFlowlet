@@ -219,10 +219,9 @@
                 horizontal : function() {
                     return (
                         this
-                        .withElementWrapper(function(el,l) {                        
-                            var label = E.mk("label");
-                            if(l !== undefined) {
-                                label.append(l);
+                        .withElementWrapper(function(el,label) {
+                            if(label === undefined) {
+                                label = "";
                             }
                             return ( 
                                 E.mk("td", {

@@ -176,7 +176,6 @@ $(document).ready(function(){
         f1Elem.val("A:2");
         form.update();
         
-        
         deepEqual(
             out, 
             [
