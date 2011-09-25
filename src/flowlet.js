@@ -8,53 +8,48 @@ var Flowlet = (function(){
 
     var ERROR_TYPE = "ERROR_TYPE";
     
-    var mkForm;
-    var mkFormFun =
-        function(layout, state, notify, update) {
-            
-            var listen = function(f) {
-                state.listen(f);
-            };
+    // Flowlet factory object, containing a buildFlowlet function
+    // and a function 'extend' for plugin new methods.
+    var factory = (function () {
+        
+        // Creates a new flowlet.
+        var Flowlet = function(layout, state, notify, update) {
                 
-            var renderTo = function(parent){
-                // Subscribe to state
-                state.listen(function(){});
-                layout.renderTo(parent);
-            };            
-            
-            var bind = function(f) {                    
-                var oldForm;                    
-                var state2 =                
-                    state.bind (function(x) {
-                        
-                        // Create new form 
-                        var form = f(x);
-                        
-                        // Remove old
-                        if( oldForm !== undefined) {
-                            oldForm.layout.remove();
-                        }
-                        oldForm = form;
-                        layout.append(form.layout);
-                        return form.state;
-                    });                        
+                this.listen = function(f) {
+                    state.listen(f);
+                };
+                    
+                this.renderTo = function(parent){
+                    // Subscribe to state
+                    state.listen(function(){});
+                    layout.renderTo(parent);
+                };            
                 
-                return mkForm(layout, state2, notify, update);                                       
-            };
+                this.bind = function(f) {                    
+                    var oldForm;                    
+                    var state2 =                
+                        state.bind (function(x) {
+                            
+                            // Create new form 
+                            var form = f(x);
+                            
+                            // Remove old
+                            if( oldForm !== undefined) {
+                                oldForm.layout.remove();
+                            }
+                            oldForm = form;
+                            layout.append(form.layout);
+                            return form.state;
+                        });                        
+                    
+                    return new Flowlet(layout, state2, notify, update);                                       
+                };
+                    
+                this.layout = layout;
                 
-            return {    
-                
-                layout : layout,
-                
-                listen : listen,
-                
-                state : state,
-                
-                renderTo : renderTo,
-                                
-                bind : bind,
-                
-                apply : function(f) {
+                this.state = state;
+                    
+                this.apply = function(f) {
                     var state = this.state.apply(f.state);
                     this.layout.append(f.layout);
                     var notify = function(x) {
@@ -66,19 +61,19 @@ var Flowlet = (function(){
                         f.update();
                     };
                     
-                    return mkForm (layout, state, notify, update);
-                },
+                    return new Flowlet (layout, state, notify, update);
+                };
                 
-                notify : notify,
+                this.notify = notify;
                 
-                update : update,               
+                this.update = update;
                 
-                reset : function() {
+                this.reset = function() {
                     this.notify();
-                },
-                                
-                
-                append : function(form, f) {
+                };
+                                    
+                    
+                this.append = function(form, f) {
                     var layout = this.layout;                    
                     layout.append(form.layout);
                     
@@ -94,16 +89,15 @@ var Flowlet = (function(){
                         form.update();
                     }; 
                     
-                    return mkForm(layout, state2, notify, update);
-                },
+                    return new Flowlet(layout, state2, notify, update);
+                };
                 
-                map : function (f) {                    
-                    // FIXME: Update behavior to use instance method for map.
+                this.map = function (f) {
                     var state2 =  state.map (f);
-                    return (mkForm(layout, state2, notify, update));                
-                },
+                    return (new Flowlet(layout, state2, notify, update));                
+                };
                 
-                validate : function (f) {
+                this.validate = function (f) {
                     return (
                         this.map(function (x) {
                             var res = f(x);
@@ -118,10 +112,9 @@ var Flowlet = (function(){
                             }
                         })
                     );
+                };
                     
-                },
-                
-                squash : function() {
+                this.squash = function() {
                     var thisForm = this;
                     return (
                         F.ret()
@@ -129,19 +122,19 @@ var Flowlet = (function(){
                             return thisForm;
                         })
                     );
-                },
-                
-                withContainer : function(f) {
+                };
+                    
+                this.withContainer = function(f) {
                     this.layout.withContainer(f);
                     return this;
-                },
-                
-                withElementWrapper : function(f) {
+                };
+                    
+                this.withElementWrapper = function(f) {
                     this.layout.addWrapper(f);
                     return this;
-                },
-                
-                withLayout : function(arg) {
+                };
+                    
+                withLayout = function(arg) {
                     this.layout.withContainer(function() {
                         return {
                             inner : arg.inner,
@@ -149,37 +142,15 @@ var Flowlet = (function(){
                         };
                     });
                     this.layout.addWrapper(arg.wrapper);
-                },
-                
-                withLabel : function(l) {
+                };
+                    
+                this.withLabel = function(l) {
                     this.layout.setLabel(l);
                     return this;
-                },
-                
-                withValidationIcon : function () {
-                    var form = this;
+                };
                     
-                    var icon =
-                        E.mk("div", {
-                            attrs : { "class" : "icon"}
-                        });
                     
-                    form.layout.append(icon);
-                    form.state.listen(function (x) {
-                        if (x.type === ERROR_TYPE) {
-                            icon.jQuery.addClass("error");
-                            icon.jQuery.removeClass("valid");
-                        }
-                        else {
-                            icon.jQuery.addClass("valid");
-                            icon.jQuery.removeClass("error");
-                        }
-                    
-                    });
-                    return form;
-                },
-                
-                vertical : function() {
+                this.vertical =function() {
                     return (
                         this
                         .withElementWrapper(function(el,l) {
@@ -212,9 +183,9 @@ var Flowlet = (function(){
                             };                                           
                         })
                     );
-                },
-                
-                horizontal : function() {
+                };
+                    
+                this.horizontal = function() {
                     return (
                         this
                         .withElementWrapper(function(el,label) {
@@ -245,26 +216,42 @@ var Flowlet = (function(){
                             };                                           
                         })
                     );
-                }
+                };
             };
-        };    
-    mkForm = mkFormFun;        
-    
-    /************************************************************************
-    * Return form
-    * @value - value to be lifted.
-    * @return form with constant state and empty body.
-    *************************************************************************/    
-    var lift =
-        function(x) {
-            var state = Signal.lift(x);
-            return mkForm(L.mk(), state);
+            
+        var extend = function (arg) {
+            for (var prop in arg) {
+                Pos.prototype[prop] = arg[prop];
+            }
         };
+        
+        return {
+            buildFlowlet : function(layout, state, notify, update) {
+                return new Flowlet(layout, state, notify, update);
+            },
+            
+            extend : extend
+        };
+        
+    }());
+    
+    
 
     return {
-        mkForm : mkForm,
         
-        lift : lift,
+        Factory : factory,
+        
+        
+        /************************************************************************
+        * Return form
+        * @value - value to be lifted.
+        * @return form with constant state and empty body.
+        *************************************************************************/    
+        lift : function(x) {
+            var F = this;
+            var state = Signal.lift(x);
+            return F.buildFlowlet(L.mk(), state);
+        },
         
         combine : function() {
             var F = this;
@@ -301,7 +288,7 @@ var Flowlet = (function(){
                 block.trigger(true);
             };
             
-            return F.mkForm(layout, state, notify, update);            
+            return F.Factory.buildFlowlet(layout, state, notify, update);            
         }
     };
     

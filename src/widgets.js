@@ -50,7 +50,7 @@ Flowlet.Widgets = (function() {
                 update();
             };
             
-            return Flowlet.mkForm(layout, state, notify, update);
+            return Flowlet.Factory.buildFlowlet(layout, state, notify, update);
         },
 
 
@@ -100,7 +100,7 @@ Flowlet.Widgets = (function() {
             };                
             
             layout.append(elem);
-            return Flowlet.mkForm(layout, state, notify, update);
+            return Flowlet.buildFlowlet(layout, state, notify, update);
         },
         
 
@@ -160,7 +160,7 @@ Flowlet.Widgets = (function() {
                 update();
             };                
             
-            return Flowlet.mkForm(layout, state, notify, update);        
+            return Flowlet.Factory.buildFlowlet(layout, state, notify, update);        
         }
         
     };

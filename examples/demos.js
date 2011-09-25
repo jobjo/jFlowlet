@@ -1,5 +1,10 @@
 $(document).ready (function () {
     
+        
+    var F = Flowlet;
+    var W = Flowlet.Widgets;
+    
+    
     var demo1 =
         F.combine (
             function (n, e, c) {
@@ -10,9 +15,9 @@ $(document).ready (function () {
                 };
             },
             
-            F.Control.input("").withLabel("Your Name"),
-            F.Control.input("").withLabel("Your Email"),
-            F.Control.select(
+            W.input("").withLabel("Your Name"),
+            W.input("").withLabel("Your Email"),
+            W.select(
                 0, 
                 [
                     {name: "Yes", value : 0},
