@@ -17,7 +17,7 @@ Flowlet.Widgets = (function() {
             var state = Signal.withTrigger(defValue);
                             
             // Input element                     
-            var layout = L.mk();
+            var layout = Container.Factory.create();
             var elem = 
                 E.mk("input", {
                     attrs : { "value" : defValue}, 
@@ -58,8 +58,9 @@ Flowlet.Widgets = (function() {
          * @pram {String} - Default value.
          * @return {flowlet<string>} 
          ******************************************************************/
-        textArea : function(def){                
-                
+        textArea : function(def) {             
+            
+            // FXIME: Conditional assign
             var defValue = "";
             if (def !== undefined) {
                 defValue = def.toString();
@@ -69,7 +70,7 @@ Flowlet.Widgets = (function() {
             var state = Signal.withTrigger(defValue);
             
             // Input element                     
-            var layout = L.mk();
+            var layout = Container.Factory.create();
             var elem = 
                 E.mk("textarea", {
                     events : {
@@ -100,7 +101,7 @@ Flowlet.Widgets = (function() {
             };                
             
             layout.append(elem);
-            return Flowlet.buildFlowlet(layout, state, notify, update);
+            return Flowlet.Factory.buildFlowlet(layout, state, notify, update);
         },
         
 
@@ -146,7 +147,7 @@ Flowlet.Widgets = (function() {
                 });
             
             // Input element                     
-            var layout = L.mk();                
+            var layout = Container.Factory.create();
             layout.append(elem);            
             
             // Notify function

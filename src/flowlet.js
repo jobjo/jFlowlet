@@ -221,7 +221,7 @@ var Flowlet = (function(){
             
         var extend = function (arg) {
             for (var prop in arg) {
-                Pos.prototype[prop] = arg[prop];
+                Flowlet.prototype[prop] = arg[prop];
             }
         };
         
@@ -250,7 +250,7 @@ var Flowlet = (function(){
         lift : function(x) {
             var F = this;
             var state = Signal.lift(x);
-            return F.buildFlowlet(L.mk(), state);
+            return F.buildFlowlet(Container.Factory.create(), state);
         },
         
         combine : function() {

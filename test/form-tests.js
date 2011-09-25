@@ -182,6 +182,24 @@ $(document).ready(function(){
         
         
     });
+    
+    
+    test("Test extend", function () {    
+        
+        Flowlet.Factory.extend(
+                {
+                    goodMorning : function () {
+                        this.state.list
+                        return "Good morning";
+                    }
+                }
+        );
+        
+        var f = Flowlet.Widgets.input ("Hello");
+        deepEqual(f.goodMorning (), "Good morning");
+        
+    
+    });
 });    
 
 

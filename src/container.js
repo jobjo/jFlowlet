@@ -1,23 +1,21 @@
-/**********************************************************************
-* 
-**********************************************************************/
-(function(){
+var Container = (function() {
 
-    var LAYOUT_TYPE = "Layout";
+    var CONTAINER_TYPE = "Container";
     
     var id = 0;
-    var mkSingle = function(siblings) {
+    
+    var mkSingle = function (siblings) {
         id = id + 1;
         var cId = id;
                 
-        if(siblings === undefined) {
-                siblings = [];
-            }
+        if (siblings === undefined) {
+            siblings = [];
+        }
                     
         // State variables
-        var parentLayout;
+        var parentContainer;
         
-        // Node to which the layout is rendered.
+        // Node to which the container is rendered.
         var containerNode;
         
         // Element to which the children are rendered.
@@ -35,12 +33,12 @@
         // Returns element wrapper.
         var wrapElement = function(el, label) {
             // Get parent wrapper
-            if (containerElement === undefined && parentLayout !== undefined) {
+            if (containerElement === undefined && parentContainer !== undefined) {
                 if (elementWrapper === undefined) {
-                    return parentLayout.wrapElement(el, label);
+                    return parentContainer.wrapElement(el, label);
                 }
                 else {
-                    return parentLayout.wrapElement(elementWrapper(el, label));
+                    return parentContainer.wrapElement(elementWrapper(el, label));
                 }
             }
             else {
@@ -62,10 +60,10 @@
             }
         };        
 
-        // Sets the parent layout.
-        var setParentLayout = function (pl) {
-            if (parentLayout === undefined) {
-                parentLayout = pl;
+        // Sets the parent container.
+        var setParentContainer = function (pl) {
+            if (parentContainer === undefined) {
+                parentContainer = pl;
             }
             else {
                 // TODO: ERROR
@@ -78,15 +76,15 @@
         
         var getContainerNode = function() {            
             // First check container
-            if(containerElement !== undefined) {
+            if (containerElement !== undefined) {
                 return containerElement.inner.jQuery;           
             }
             else {
-                if (parentLayout === undefined) {                    
+                if (parentContainer === undefined) {                    
                     return containerNode;
                 }
                 else {
-                    return parentLayout.getContainerNode();
+                    return parentContainer.getContainerNode();
                 }    
             }
         };
@@ -109,7 +107,7 @@
             elems = [];            
             if(containerElement !== undefined) {
                 siblings.map(function(sibling, ix) {            
-                    if(sibling.type === LAYOUT_TYPE) {
+                    if(sibling.type === CONTAINER_TYPE) {
                         $(sibling.getElementList()).each(function(ix,elem) {
                             containerElement.inner.append(elem);    
                         });
@@ -122,11 +120,11 @@
                 });
                 
                 
-                // Include parent layout wrapper
-                if (parentLayout !== undefined) {
+                // Include parent container wrapper
+                if (parentContainer !== undefined) {
                     renderedElements =
                         [
-                            parentLayout.wrapElement(
+                            parentContainer.wrapElement(
                                 containerElement.outer, label
                             )
                         ];
@@ -138,7 +136,7 @@
             else {                
                 // No container element.
                 siblings.map (function (sibling) {
-                    if(sibling.type === LAYOUT_TYPE) {
+                    if(sibling.type === CONTAINER_TYPE) {
                         elems = 
                             elems.concat(sibling.getElementList());
                     }
@@ -159,7 +157,7 @@
             /***********************************************************
             * Type of object.
             ***********************************************************/
-            type : LAYOUT_TYPE,      
+            type : CONTAINER_TYPE,      
 
             
             setLabel : function(l) {
@@ -178,7 +176,7 @@
             setRendered : function () {
                 isRendered = true;
                 $(siblings).each(function(ix,sibling) {
-                    if (sibling.type === LAYOUT_TYPE) {
+                    if (sibling.type === CONTAINER_TYPE) {
                         sibling.setRendered();
                     }
                 });
@@ -193,7 +191,7 @@
             /***********************************************************
             * @return Set parent
             ***********************************************************/                                                    
-            setParentLayout : setParentLayout,
+            setParentContainer : setParentContainer,
             
             /***********************************************************
             * @return The container node.
@@ -229,13 +227,13 @@
             getOffset : function() {return 0;},              
 
             /***********************************************************
-            * Append an element or layout.
+            * Append an element or container.
             ***********************************************************/                    
             append : function(sibling) {
                 
-                // Set the parent layout of the sibling
-                if (sibling.type === LAYOUT_TYPE) {
-                    sibling.setParentLayout(this);
+                // Set the parent container of the sibling
+                if (sibling.type === CONTAINER_TYPE) {
+                    sibling.setParentContainer(this);
                 }
                 
                 
@@ -264,7 +262,7 @@
                     };
                 
                 
-                // If layout is rendered, then render teh layout to
+                // If container is rendered, then render teh container to
                 // the parent element.
                 if(isRendered) {
                     sibling.renderTo(getContainerNode());
@@ -277,7 +275,7 @@
             },
                               
             /***********************************************************
-            * Remove the layout
+            * Remove the container
             ***********************************************************/                                        
             remove : function() {
                 
@@ -293,13 +291,13 @@
             },
                 
             /***********************************************************
-            * @return - number of nested layout elements.
+            * @return - number of nested container elements.
             ***********************************************************/                                        
-            numLayouts : function() {
+            numContainers : function() {
                 var count = 0;
                 for(var i = 0; i < siblings.length; i++) {
-                    if (siblings.type == LAYOUT_TYPE) {
-                        count += (1 + siblings[i].numLayouts());
+                    if (siblings.type == CONTAINER_TYPE) {
+                        count += (1 + siblings[i].numContainers());
                     }
                     else {
                         count += 1;
@@ -318,10 +316,10 @@
                         
             
             /***********************************************************
-            * Return weather a custom layout is assiged.
-            * @return - true if has custom layout.
+            * Return weather a custom container is assiged.
+            * @return - true if has custom container.
             ***********************************************************/                                                    
-            hasCustomLayout : function () {
+            hasCustomContainer : function () {
                 return elementWrapper !== undefined;
             },
             
@@ -333,7 +331,7 @@
             
 
             /***********************************************************
-            * Render the layout to a jQuery element.
+            * Render the container to a jQuery element.
             * @ parent - the parent node to be rendered to.
             * @ offset (optional) - Offset index relative to the children
             *                       of the parent node.
@@ -365,42 +363,47 @@
         };
     };    
     
-    this.L = {
+    return {
         
         /***********************************************************
          *
-         ***********************************************************/        
-        mk : mkSingle,   
-
-        /***********************************************************
-         *
          ***********************************************************/
-        mk2 : function (elems) {
-                var lastLayout = mkSingle();
+        Factory : {
+            create : function (elems) {
+                
+                if (elems === undefined) {
+                    elems = [];
+                }
+                
+                var lastContainer = mkSingle();
                 elems.map (function(elem, ix) {
                     var l = mkSingle(elem.Name, elem.Attrs, elem.Events);
-                    if (lastLayout !== undefined) {
-                        lastLayout.append(l);
+                    if (lastContainer !== undefined) {
+                        lastContainer.append(l);
                     }
                     
                 });
-                return lastLayout;
-            },
+                
+                return lastContainer;
+            }
+        },
         
         
         /***********************************************************
          *
          ***********************************************************/                    
-        sequence : function(layouts) {
-            var layout;
-            layouts.map (function(l) {
-                if (layout === undefined) {
-                    layout = l;
+        sequence : function(containers) {
+            var container;
+            containers.map (function(l) {
+                if (container === undefined) {
+                    container = l;
                 } else {
-                    layout.append(l);
+                    container.append(l);
                 }
             });
-            return layout;
+            return container;
         }
     };
-})();
+    
+    
+}());

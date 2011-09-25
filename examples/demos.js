@@ -1,9 +1,7 @@
 $(document).ready (function () {
     
-        
     var F = Flowlet;
     var W = Flowlet.Widgets;
-    
     
     var demo1 =
         F.combine (
