@@ -32,8 +32,7 @@ var Signal = (function () {
             }
         );
     };
-
-
+    
     return {
 
         /**
@@ -57,7 +56,6 @@ var Signal = (function () {
             );
         },
         
-        
         /**
          * Maps over a behavior.
          * @param {function} mapping function.
@@ -78,7 +76,6 @@ var Signal = (function () {
             );
         },
         
-        
         /**
          * Monadic bind
          * @param {signal} Input signal.
@@ -89,7 +86,6 @@ var Signal = (function () {
             var S = this;
             return S.join(b.map(f, b));
         },
-        
 
         /**
          * Static composition, applicative functor style.
@@ -114,8 +110,7 @@ var Signal = (function () {
                 })
             );
         },
-
-
+        
         /**
         * Create a behavior that when subscribed to 
         * @param {Value} The value to be lifted.
@@ -176,7 +171,6 @@ var Signal = (function () {
                 })
             );
         },        
-        
         
         /**
         * @param {Value} Initial value

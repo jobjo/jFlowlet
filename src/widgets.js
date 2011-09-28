@@ -1,6 +1,6 @@
 Flowlet.Widgets = (function() {
-    return {            
-            
+    return {
+        
         /**
          * Input text flowlet.
          * @param {Value} default
@@ -52,8 +52,7 @@ Flowlet.Widgets = (function() {
             
             return Flowlet.Factory.buildFlowlet(layout, state, notify, update);
         },
-
-
+        
         /**
          * @pram {String} - Default value.
          * @return {flowlet<string>} 
@@ -104,12 +103,11 @@ Flowlet.Widgets = (function() {
             return Flowlet.Factory.buildFlowlet(layout, state, notify, update);
         },
         
-
         /**
-        * Select
-        * @param {integer} Default selected index
-        * @param {Array} list of name and value pairs.
-        */
+         * Select
+         * @param {integer} Default selected index
+         * @param {Array} list of name and value pairs.
+         */
         select : function(defIx, values){                
                 
             if (defIx === undefined) {
@@ -164,8 +162,6 @@ Flowlet.Widgets = (function() {
             };                
             
             return Flowlet.Factory.buildFlowlet(layout, state, notify, update);        
-        }
-        
+        }        
     };
-    
 })();

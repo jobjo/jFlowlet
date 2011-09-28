@@ -4,7 +4,7 @@
  */
 (function () {
     Flowlet.Factory.extend ( {
-
+        
         /**
          * Wraps a flowlet in a container.
          * @param {function} gen Container generator function. 

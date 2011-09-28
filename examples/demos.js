@@ -28,20 +28,49 @@ $(document).ready (function () {
     // Render using vertical layout.
     example1.vertical().renderTo($("#demos"));
     
+    // Example of a dependent flowlet where the
+    // choice of the select box drives the label
+    // of the dependent flowlet.
+    var example2 =
+        W.select(
+            0, 
+            [
+                {name: "Yes", value : true},
+                {name: "No", value : false}
+            ]
+        ).
+        withLabel("Yes or No").
+        bind( function(choice) {
+            if (choice) {
+                return (
+                    W.input("").
+                    withLabel("Yes")
+                );
+            }
+            else {
+                return (
+                    W.input("").
+                    withLabel("No")
+                );                
+            }
+        });
+        
+    example2.verticalTable().renderTo($("#demos"));
     
     // Same as example 2 but using Flowlet.infer.
     // Not yet implemented.
+    /*
     var example2 = Flowlet.infer({
         
         name : 
-            W.input("Joel").
+            W.input("John").
             isNotEmpty().
             withValidationIcon().
             withLabel("Name"),
         
         
         email : 
-            W.input("Joel").
+            W.input("john@smith.com).
             isNotEmpty().
             withValidationIcon().
             withLabel("Name"),
@@ -53,10 +82,7 @@ $(document).ready (function () {
                     {name: "Yes", value : 0},
                     {name: "No", value : 1}
                 ]
-            ).withLabel("Contact Me")
+            ).withLabel("Contact Me")            
     });
-    
-    
-    
-    
+    */
 });

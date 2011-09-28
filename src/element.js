@@ -70,7 +70,6 @@ var Element = (function(){
                     return this.isRemoved;
                 },
                 
-                
                 /**
                 * Removes the element node.
                 */

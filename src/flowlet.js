@@ -2,7 +2,7 @@
 * @namespace Flowlet
 */
 var Flowlet = (function(){
-
+    
     var ERROR_TYPE = "ERROR_TYPE";
     
     // Flowlet factory object, containing a `buildFlowlet` function
