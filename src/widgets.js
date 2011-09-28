@@ -1,11 +1,11 @@
 Flowlet.Widgets = (function() {
     return {            
             
-        /******************************************************************
-         * 
+        /**
+         * Input text flowlet.
          * @param {Value} default
          * @return tex-box flowlet.
-         ******************************************************************/
+         */
         input : function(def){                
                 
             var defValue = "";
@@ -19,7 +19,7 @@ Flowlet.Widgets = (function() {
             // Input element                     
             var layout = Container.Factory.create();
             var elem = 
-                E.mk("input", {
+                Element.mk("input", {
                     attrs : { "value" : defValue}, 
                     events : {
                         "keyup": 
@@ -54,10 +54,10 @@ Flowlet.Widgets = (function() {
         },
 
 
-        /******************************************************************
+        /**
          * @pram {String} - Default value.
          * @return {flowlet<string>} 
-         ******************************************************************/
+         */
         textArea : function(def) {             
             
             // FXIME: Conditional assign
@@ -72,7 +72,7 @@ Flowlet.Widgets = (function() {
             // Input element                     
             var layout = Container.Factory.create();
             var elem = 
-                E.mk("textarea", {
+                Element.mk("textarea", {
                     events : {
                         keyup : function(){
                             state.trigger($(this).val());
@@ -105,9 +105,11 @@ Flowlet.Widgets = (function() {
         },
         
 
-        /******************************************************************
+        /**
         * Select
-        ******************************************************************/
+        * @param {integer} Default selected index
+        * @param {Array} list of name and value pairs.
+        */
         select : function(defIx, values){                
                 
             if (defIx === undefined) {
@@ -125,7 +127,7 @@ Flowlet.Widgets = (function() {
             };            
             
             elem = 
-                E.mk("select", {
+                Element.mk("select", {
                     attrs : { "value" : values[defIx]}, 
                     events : {
                         "change": update
@@ -137,7 +139,7 @@ Flowlet.Widgets = (function() {
                                 attrs.selected = "true";
                             }
                             var opt =
-                                E.mk("option", {
+                                Element.mk("option", {
                                     attrs : attrs,
                                     children : [x.name]}
                                 );                 

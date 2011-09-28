@@ -1,41 +1,67 @@
+/**
+ * Loading this script file extends all flowlet objects with
+ * layout capabilities.
+ */
 (function () {
     Flowlet.Factory.extend ( {
 
-        /************************************************************************
-         * Wraps flowlet in container.
-         ***********************************************************************/        
-        withContainer : function(f) {
-            this.container.withContainer(f);
+        /**
+         * Wraps a flowlet in a container.
+         * @param {function} gen Container generator function. 
+         * @return {flowlet} The flowlet object.
+         */
+        withContainer : function(gen) {
+            this.container.withContainer(gen);
             return this;
         },
 
-        /************************************************************************
-         * Wraps elements
-         ***********************************************************************/
-        withElementWrapper : function(f) {
-            this.container.addWrapper(f);
+        /**
+         * Wraps all elements of all nested containers of the flowlet.
+         * @param {function} gen Element generator function from an element and
+         * label pair to an element.   
+         * @return {flowlet} The flowlet object.
+         */
+        withElementWrapper : function(gen) {
+            this.container.addWrapper(gen);
             return this;
         },
         
+        /**
+         * Enhances the form with a vertical table layout.
+         * @return {flowlet} The flowlet object.
+         */
+        vertical : function() {
+            return (
+                this
+                .withElementWrapper(function(el,l) {
+                    var labelCell = Element.mk("label");
+                    if(l !== undefined) {
+                        labelCell.append(l);
+                    }
+                    return Element.mk("div", {children: [labelCell, el]});
+                })
+            );
+        },
         
-        /************************************************************************
-         * Enhances the form with a vertical table layout
-         ***********************************************************************/
+        /**
+         * Enhances the form with a vertical table layout.
+         * @return {flowlet} The flowlet object.
+         */
         verticalTable : function() {
             return (
                 this
                 .withElementWrapper(function(el,l) {
                 
-                    var labelCell = E.mk("td");
+                    var labelCell = Element.mk("td");
                     if(l !== undefined) {
                         labelCell.append(l);
                     }                
                     
                     return ( 
-                        E.mk("tr", {
+                        Element.mk("tr", {
                             children: [
                                 labelCell,
-                                E.mk("td", {
+                                Element.mk("td", {
                                     children : [el]
                                 })
                             ]
@@ -43,9 +69,9 @@
                     );
                 })
                 .withContainer(function() {
-                    var inner = E.mk("tbody");            
+                    var inner = Element.mk("tbody");            
                     var outer = 
-                        E.mk("table", {
+                        Element.mk("table", {
                             children : [inner]
                         });
                     return {
@@ -56,6 +82,10 @@
             );
         },
         
+        /**
+         * Enhances the form with a horizontal table layout.
+         * @return {flowlet} The flowlet object.
+         */
         horizontalTable : function() {
             return (
                 this
@@ -64,17 +94,17 @@
                         label = "";
                     }
                     return ( 
-                        E.mk("td", {
+                        Element.mk("td", {
                             children: [label, el]
                         })
                     );
                 })
                 .withContainer(function() {
-                    var inner = E.mk("tr");            
+                    var inner = Element.mk("tr");            
                     var outer = 
-                        E.mk("table", {
+                        Element.mk("table", {
                             children : [
-                                E.mk("tbody", {
+                                Element.mk("tbody", {
                                     children: [inner]
                                 })
                             ]

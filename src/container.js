@@ -1,3 +1,7 @@
+/**
+ * @namespace Functionality for constructing containers.
+ * A container represents a nested structure of element and label pairs.
+ */
 var Container = (function() {
 
     var CONTAINER_TYPE = "Container";
@@ -12,7 +16,7 @@ var Container = (function() {
             siblings = [];
         }
                     
-        // State variables
+        // Reference to the parent container if exists.
         var parentContainer;
         
         // Node to which the container is rendered.
@@ -21,24 +25,31 @@ var Container = (function() {
         // Element to which the children are rendered.
         var containerElement;
                 
-        // Label
+        // Each container may have an associated label.
         var label;
         
-        var isRendered = false;        
+        // Flag for checking if the container has been rendered.
+        var isRendered = false;
+        
+        // References all sub elements.
         var renderedElements = [];
         
         // Function defining wrapping of elements.
         var elementWrapper;
         
-        // Returns element wrapper.
+        // Returns the element wrapper.
         var wrapElement = function(el, label) {
-            // Get parent wrapper
-            if (containerElement === undefined && parentContainer !== undefined) {
+            if (containerElement === undefined &&
+                            parentContainer !== undefined) {
+                
                 if (elementWrapper === undefined) {
                     return parentContainer.wrapElement(el, label);
                 }
                 else {
-                    return parentContainer.wrapElement(elementWrapper(el, label));
+                    return (
+                        parentContainer.wrapElement(
+                            elementWrapper(el, label))
+                    );
                 }
             }
             else {
@@ -154,16 +165,21 @@ var Container = (function() {
         return {
             id : id,
             
-            /***********************************************************
-            * Type of object.
-            ***********************************************************/
-            type : CONTAINER_TYPE,      
+            /**
+             * @const Type for annotating containers.
+             **/            
+            type : CONTAINER_TYPE,
 
-            
+            /**
+             * @param {element} Label element.
+             **/            
             setLabel : function(l) {
                 label = l;
             },
             
+            /**
+             * @returns {Array} Array of all nested elements.
+             **/            
             getRenderedElements : function () {
                 if (renderedElements !== undefined) {
                     return renderedElements;
@@ -173,6 +189,10 @@ var Container = (function() {
                 }
             },
             
+            
+            /**
+             * Recursivly flags nested containers as rendered.
+             **/
             setRendered : function () {
                 isRendered = true;
                 $(siblings).each(function(ix,sibling) {
@@ -182,26 +202,29 @@ var Container = (function() {
                 });
             },
             
+            /**
+             * @returns True if the containerElement is defined.
+             **/            
             hasContainer : function() {
                 return containerElement !== undefined;
             },
             
             wrapElement : wrapElement,
             
-            /***********************************************************
-            * @return Set parent
-            ***********************************************************/                                                    
+            /**
+             * @return Set parent
+             */
             setParentContainer : setParentContainer,
             
-            /***********************************************************
-            * @return The container node.
-            ***********************************************************/                                                                
+            /**
+             * @return The container node.
+             */
             getContainerNode : getContainerNode,
             
                         
-            /***********************************************************
-            * @return Number of elements.
-            ***********************************************************/                                        
+            /**
+             * @return Number of elements.
+             */
             numElements : function () {
                 var count = 0;
                 for (var i = 0; i < siblings.length; i++) {
@@ -211,9 +234,9 @@ var Container = (function() {
                 return count;
             },
             
-            /***********************************************************
+            /**
             * @return Offset
-            ***********************************************************/                                                            
+            */
             withContainer : function(f) {
                 containerElement = f ();
                 this.getOffset = function () {
@@ -221,14 +244,14 @@ var Container = (function() {
                 };
             },
             
-            /***********************************************************
+            /**
             * @return Offset
-            ***********************************************************/                                                            
+            */
             getOffset : function() {return 0;},              
 
-            /***********************************************************
+            /**
             * Append an element or container.
-            ***********************************************************/                    
+            */
             append : function(sibling) {
                 
                 // Set the parent container of the sibling
@@ -254,7 +277,8 @@ var Container = (function() {
                     function () {
                         var count = 0;
                         var i = 0;
-                        while (sibling[i] !== undefined && sibling[i].id !== sibling.id) { 
+                        while (sibling[i] !== undefined && 
+                                sibling[i].id !== sibling.id) { 
                             count += siblings[i].numElements();
                             i = i + 1;
                         }
@@ -274,9 +298,9 @@ var Container = (function() {
                 return this;          
             },
                               
-            /***********************************************************
+            /**
             * Remove the container
-            ***********************************************************/                                        
+            */
             remove : function() {
                 
                 // Remove all siblings
@@ -290,9 +314,9 @@ var Container = (function() {
                 siblings = [];
             },
                 
-            /***********************************************************
+            /**
             * @return - number of nested container elements.
-            ***********************************************************/                                        
+            */
             numContainers : function() {
                 var count = 0;
                 for(var i = 0; i < siblings.length; i++) {
@@ -308,35 +332,35 @@ var Container = (function() {
 
 
             
-            /***********************************************************
+            /**
             * Add a wrapper funciton.
             * @return - same object.
-            ***********************************************************/                                                    
+            */
             addWrapper : addWrapper,
                         
             
-            /***********************************************************
+            /**
             * Return weather a custom container is assiged.
             * @return - true if has custom container.
-            ***********************************************************/                                                    
+            */
             hasCustomContainer : function () {
                 return elementWrapper !== undefined;
             },
             
-            /***********************************************************
+            /**
             * Return all leaf elements.
             * @return - an array of all leaf elements.
-            ***********************************************************/                                                    
-            getElementList :getElementList,
+            **/
+            getElementList : getElementList,
             
 
-            /***********************************************************
+            /**
             * Render the container to a jQuery element.
             * @ parent - the parent node to be rendered to.
             * @ offset (optional) - Offset index relative to the children
             *                       of the parent node.
             * @return - the new offset.
-            ***********************************************************/                                        
+            */
             renderTo : function(containerNode, offset){
                     
                 setContainerNode(containerNode);                
@@ -365,9 +389,9 @@ var Container = (function() {
     
     return {
         
-        /***********************************************************
-         *
-         ***********************************************************/
+        /**
+        * @property {object} Factory object containing a builder function.
+        */
         Factory : {
             create : function (elems) {
                 
@@ -387,11 +411,11 @@ var Container = (function() {
                 return lastContainer;
             }
         },
-        
-        
-        /***********************************************************
-         *
-         ***********************************************************/                    
+                
+        /**
+         * @param {Array} Array of containers.
+         * @returns {container} composed containers.
+         **/
         sequence : function(containers) {
             var container;
             containers.map (function(l) {

@@ -1,15 +1,20 @@
-/**********************************************************************
-* 
-**********************************************************************/
-(function(){
+/**
+* @namespace Element Utility module for constructing html nodes.
+* Construction is lazy so that DOM nodes are not created until an
+* element is rendered.
+*/
+var Element = (function(){
+    
     var ELEMENT_TYPE = "Element";
     var id = 0;
-    this.E = {
+    
+    return {
    
-        /***********************************************************
-        * Creaates and element
-        *
-        ***********************************************************/                                                            
+        /**
+        * Creaates an HTML element.
+        * @param {string} name Name of the tag.
+        * @param {object} Attributes and events.
+        */
         mk : function(name, attrs) {
 
             // Create element
@@ -25,24 +30,24 @@
                                             
             return {
                 
-                /***********************************************************
-                * Type identifier of element.
-                ***********************************************************/                                                            
+                /**
+                 * Type identifier of element.
+                 */
                 type : ELEMENT_TYPE,
                 
-                /***********************************************************
-                * Type identifier of element.
-                ***********************************************************/
+                /**
+                 * Type identifier of element.
+                 */
                 jQuery : elem,
                 
-                /***********************************************************
-                * Id of the element.
-                ***********************************************************/                    
+                /**
+                 * Id of the element.
+                 */
                 id : id + 1,
                 
-                /***********************************************************
-                * Append
-                ***********************************************************/                                        
+                /**
+                 * Append
+                 */
                 append : function(child) {
                     attrs.children.push(child);
                     
@@ -58,35 +63,35 @@
                     return this;                                                
                 },               
                 
-                /***********************************************************
-                * @return - Weather or not the element has been removed.
-                ***********************************************************/
+                /**
+                 * @return - Weather or not the element has been removed.
+                 */
                 isRemoved : function () {
                     return this.isRemoved;
                 },
                 
                 
-                /***********************************************************
+                /**
                 * Removes the element node.
-                ***********************************************************/                    
+                */
                 remove : function(child) {
                     attrs = {};
                     elem.remove();
                     isRemoved = true;
                 },                           
                 
-                /***********************************************************
-                * @return - Number of elements.
-                ***********************************************************/
+                /**
+                 * @return - Number of elements.
+                 */
                 numElements : function () {
                     return 1;
                 },                                        
                 
-                /***********************************************************
-                * Renders to the given parent node.
-                * @ param parent 
-                * @ param offest the offest for where to insert.
-                ***********************************************************/                
+                /**
+                 * Renders to the given parent node.
+                 * @ param parent 
+                 * @ param offest the offest for where to insert.
+                 */
                 renderTo : function(parent, offset){
                                             
                     // Set offset
@@ -96,7 +101,7 @@
                     
                     // Add attributes
                     if(attrs.attrs !== undefined) {
-                        for(name in attrs.attrs) {
+                        for(var name in attrs.attrs) {
                             elem.attr(name, attrs.attrs[name]);
                         }
                     }                            
@@ -113,8 +118,8 @@
 
                     // Add events
                     if(attrs.events !== undefined) {
-                        for(name in attrs.events) {
-                            elem.bind(name, attrs.events[name]);
+                        for(var prop in attrs.events) {
+                            elem.bind(prop, attrs.events[prop]);
                         }                                    
                     }
                     
@@ -132,7 +137,7 @@
                     isRendered = true;
                     return 1;
                 }
-            }
+            };
         }
-    }
-})()
+    };
+})();

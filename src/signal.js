@@ -1,7 +1,6 @@
-/********************************************************************************
- * Module Signal.
- *
- *******************************************************************************/
+/**
+ * @namepsace {Signal} A signal represents a time varying value.
+ */
 var Signal = (function () {
 
     // Create a new behavior from a listener.
@@ -37,11 +36,11 @@ var Signal = (function () {
 
     return {
 
-        /********************************************************************
+        /**
         * Join
         * @param {Behavior} Behavior of behavior to be merged.
         * @return {Behavior} 
-        ********************************************************************/
+        */
         join : function (bOut) {
             var S = this;
             var index = 0;
@@ -59,9 +58,12 @@ var Signal = (function () {
         },
         
         
-        /********************************************************************
-        * Maps over a behavior.
-        ********************************************************************/
+        /**
+         * Maps over a behavior.
+         * @param {function} mapping function.
+         * @param {signal} input signal
+         * @returns {signal} mapped signal.
+         */
         map : function (f, b) {
             return (
                 mk(function (g) {
@@ -77,18 +79,21 @@ var Signal = (function () {
         },
         
         
-        /********************************************************************
-        * Bind
-        ********************************************************************/
+        /**
+         * Monadic bind
+         * @param {signal} Input signal.
+         * @param {function} 
+         * @returns signal
+         */
         bind : function (b, f) {
             var S = this;
             return S.join(b.map(f, b));
         },
         
 
-        /********************************************************************
-        * Apply
-        ********************************************************************/
+        /**
+         * Static composition, applicative functor style.
+         */
         apply : function (bF, b) {
             var S = this;
             
@@ -111,10 +116,10 @@ var Signal = (function () {
         },
 
 
-        /********************************************************************
+        /**
         * Create a behavior that when subscribed to 
         * @param {Value} The value to be lifted.
-        ********************************************************************/
+        */
         // Lifts a value into a behavior.
         lift: function (x) {
             var S = this;
@@ -126,10 +131,9 @@ var Signal = (function () {
             );
         },
         
-        /********************************************************************
-        * TODO
-        * @param {Function}
-        ********************************************************************/
+        /**
+         * @param {Function}
+         */
         combine: function () {
             var S = this;
             var f = arguments[0];
@@ -174,9 +178,9 @@ var Signal = (function () {
         },        
         
         
-        /********************************************************************
+        /**
         * @param {Value} Initial value
-        ********************************************************************/
+        */
         withTrigger: function (init) {
 
             var S = this;
@@ -223,11 +227,11 @@ var Signal = (function () {
             return b;
         },
         
-        /******************************************************************** 
-         * @param {Behavior<bool>} Behavior that filter the signal.
-         * @param {Behaviour} Input behavior
-         * @return {Behavior} Filtered behavio.
-         ********************************************************************/
+        /**
+         * @param {signal bool} Signal that filter the signal.
+         * @param {signal} Input signal.
+         * @return {signal} Filtered signal.
+         */
         blockWith: function (block, b) {
             var S = this;
             var bOut = S.withTrigger(b.current());

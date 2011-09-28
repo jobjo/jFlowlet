@@ -3,7 +3,8 @@ $(document).ready (function () {
     var F = Flowlet;
     var W = Flowlet.Widgets;
     
-    var demo1 =
+    // Example using Flowlet.combine for static composition.
+    var example1 =
         F.combine (
             function (n, e, c) {
                 return {
@@ -23,24 +24,38 @@ $(document).ready (function () {
                 ]
             ).withLabel("Contact Me")
         );
+
+    // Render using vertical layout.
+    example1.vertical().renderTo($("#demos"));
     
     
-    
-    // demo1.horizontal().renderTo($("#demos"));  
-    
-    var f =Flowlet.Widgets.input("");
-    f.container.withContainer(function() {
-        return {
-            inner : E.mk("span"),
-            outer : E.mk("table")
-        };
+    // Same as example 2 but using Flowlet.infer.
+    // Not yet implemented.
+    var example2 = Flowlet.infer({
+        
+        name : 
+            W.input("Joel").
+            isNotEmpty().
+            withValidationIcon().
+            withLabel("Name"),
+        
+        
+        email : 
+            W.input("Joel").
+            isNotEmpty().
+            withValidationIcon().
+            withLabel("Name"),
+        
+        contactMe : 
+            W.select(
+                0, 
+                [
+                    {name: "Yes", value : 0},
+                    {name: "No", value : 1}
+                ]
+            ).withLabel("Contact Me")
     });
     
-
-    var f =Flowlet.Widgets.input("");
-    f.withLabel("Label");
-    f.horizontalTable();
-    f.renderTo($("#demos"));
     
     
     

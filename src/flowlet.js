@@ -1,24 +1,30 @@
+/**
+* @namespace Flowlet
+*/
 var Flowlet = (function(){
-
-    /************************************************************************
-    * Form factory method.
-    * @body - form element
-    * @state - form state
-    *************************************************************************/
 
     var ERROR_TYPE = "ERROR_TYPE";
     
-    // Flowlet factory object, containing a buildFlowlet function
-    // and a function 'extend' for plugin new methods.
+    // Flowlet factory object, containing a `buildFlowlet` function
+    // and a function `extend` for enhancing flowlet objects with
+    // new functionality.
     var factory = (function () {
         
-        // Creates a new flowlet.
+        /**
+         * Flowlet constructor
+         * @param {Container}
+         * @param {Signal} 
+         * @param {Function} 
+         * @param {Function}
+         */
         var Flowlet = function(container, state, notify, update) {
             
+            // Listen to the state of a flowlet
             this.listen = function(f) {
                 state.listen(f);
             };
                 
+            // Render the flowlet to a parent DOM or jQuery node.
             this.renderTo = function(parent){
                 // Subscribe to state
                 state.listen(function(){});
@@ -26,6 +32,7 @@ var Flowlet = (function(){
             
             };
             
+            // Creates a dependent flowlet.
             this.bind = function(f) {                    
                 var oldForm;                    
                 var state2 =                
@@ -79,11 +86,13 @@ var Flowlet = (function(){
                 return new Flowlet(container, state2, notify, update);
             };
             
+            // Mapping the flowlet state
             this.map = function (f) {
                 var state2 =  state.map (f);
                 return (new Flowlet(container, state2, notify, update));                
             };
             
+            // Closing the container around flowlets.
             this.squash = function() {
                 var form = this;
                 return (
@@ -94,12 +103,15 @@ var Flowlet = (function(){
                 );
             };
                                 
+            // Sets the label component.
             this.withLabel = function(l) {
                 this.container.setLabel(l);
                 return this;
             };  
         };
-            
+
+        // This method is for extending all flowlet objects with new
+        // additional functionality.
         var extend = function (arg) {
             for (var prop in arg) {
                 Flowlet.prototype[prop] = arg[prop];
@@ -120,17 +132,23 @@ var Flowlet = (function(){
         
         Factory : factory,
                 
-        /************************************************************************
-        * Return form
-        * @value - value to be lifted.
-        * @return form with constant state and empty body.
-        *************************************************************************/    
+        /**
+         * Lift a value into a flowlet.
+         * @param {object} Value.
+         * @return flowlet with constant state and an empty container.
+         */
         lift : function(x) {
             var F = this;
             var state = Signal.lift(x);
             return F.buildFlowlet(Container.Factory.create(), state);
         },
         
+        /**
+         * Static flowlet composition.
+         * @param {Function} Function for composing the flowlet states.
+         * @return composed flowlet constisting of the list of provided sub
+         * flowlets.
+         */        
         combine : function() {
             var F = this;
             var f = arguments[0];
@@ -167,6 +185,14 @@ var Flowlet = (function(){
             };
             
             return F.Factory.buildFlowlet(container, state, notify, update);            
+        },
+        
+        /**
+         * Infer a composition function and a set  of flowlet by refecting an          
+         * object.
+         */
+        infer : function (obj) {
+            /// TODO: 
         }
     };
     
