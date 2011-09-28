@@ -1,2 +1,10 @@
-jFlowlet is a JavaScript library for high-level construction of dynamic
-user interfaces.
+jFlowlet is a JavaScript library for constructing widgets such as HTML forms
+or any editable components at a high abstraction level using a declerative
+style.
+
+
+jFlowlets are inspired by WebSharper Formlets[1]
+
+
+[1] http://websharper.com/docs/WorkingWithFormlets.aspx
+
