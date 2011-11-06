@@ -1,8 +1,8 @@
-/**
-* @namespace Flowlet
-*/
+/*******************************************************************************
+* Flowlet module
+*******************************************************************************/
 var Flowlet = (function(){
-    
+
     var ERROR_TYPE = "ERROR_TYPE";
     
     // Flowlet factory object, containing a `buildFlowlet` function
@@ -10,13 +10,13 @@ var Flowlet = (function(){
     // new functionality.
     var factory = (function () {
         
-        /**
+        /***********************************************************************
          * Flowlet constructor
          * @param {Container}
          * @param {Signal} 
          * @param {Function} 
          * @param {Function}
-         */
+         * ********************************************************************/
         var Flowlet = function(container, state, notify, update) {
             
             // Listen to the state of a flowlet
@@ -132,23 +132,23 @@ var Flowlet = (function(){
         
         Factory : factory,
                 
-        /**
+        /***********************************************************************
          * Lift a value into a flowlet.
-         * @param {object} Value.
-         * @return flowlet with constant state and an empty container.
-         */
+         * @value 
+         * @return flowlet with constant state and an empty container. 
+         *********************************************************************/
         lift : function(x) {
             var F = this;
             var state = Signal.lift(x);
             return F.buildFlowlet(Container.Factory.create(), state);
         },
         
-        /**
+        /***********************************************************************
          * Static flowlet composition.
          * @param {Function} Function for composing the flowlet states.
          * @return composed flowlet constisting of the list of provided sub
          * flowlets.
-         */        
+         **********************************************************************/        
         combine : function() {
             var F = this;
             var f = arguments[0];
@@ -187,10 +187,9 @@ var Flowlet = (function(){
             return F.Factory.buildFlowlet(container, state, notify, update);            
         },
         
-        /**
-         * Infer a composition function and a set  of flowlet by refecting an          
-         * object.
-         */
+        /***********************************************************************
+        * TODO
+        ***********************************************************************/        
         infer : function (obj) {
             /// TODO: 
         }
