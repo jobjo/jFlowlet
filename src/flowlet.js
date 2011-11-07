@@ -91,17 +91,6 @@ var Flowlet = (function(){
                 var state2 =  state.map (f);
                 return (new Flowlet(container, state2, notify, update));                
             };
-            
-            // Closing the container around flowlets.
-            this.squash = function() {
-                var form = this;
-                return (
-                    F.ret()
-                    .bind(function(){
-                        return form;
-                    })
-                );
-            };
                                 
             // Sets the label component.
             this.withLabel = function(l) {
@@ -140,7 +129,7 @@ var Flowlet = (function(){
         lift : function(x) {
             var F = this;
             var state = Signal.lift(x);
-            return F.buildFlowlet(Container.Factory.create(), state);
+            return F.Factory.buildFlowlet(Container.Factory.create(), state);
         },
         
         /***********************************************************************

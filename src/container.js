@@ -105,7 +105,7 @@ var Container = (function() {
             var old = elementWrapper;            
             elementWrapper = function (el,label) {
                 if (old !== undefined) {
-                    return wrapper (old (el,label));
+                    return wrapper (old (el));
                 }
                 else {
                     return wrapper(el, label);

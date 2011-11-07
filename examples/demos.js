@@ -84,11 +84,23 @@ $(document).ready (function () {
             ).withLabel("Contact Me")            
     });
     */
+    
+    var email =
+        Flowlet.lift(1).
+        bind (function() {
+            return (
+                W.input("").                    
+                isEmail().
+                withValidationIcon().
+                withLabel("Yes")
+            );
+        });
+
     var example3 =
         W.select(
             0, 
             [
-                {name: "Yes", value : true},
+                {name: "naaaaa", value : true},
                 {name: "No", value : false}
             ]
         ).
@@ -96,11 +108,8 @@ $(document).ready (function () {
         bind( function(choice) {
             if (choice) {
                 return (
-                    W.input("").                    
-                    isEmail().
-                    withValidationIcon().
+                    email.
                     withLabel("Yes")
-                    
                 );
             }
             else {
@@ -110,7 +119,11 @@ $(document).ready (function () {
                 );                
             }
         });        
-        
+    
+    
+
+
+    
     example3.verticalTable().renderTo($("#demos"));
     
 });
