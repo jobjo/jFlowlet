@@ -99,7 +99,6 @@ $(document).ready (function () {
                     W.input("").                    
                     isEmail().
                     withValidationIcon().
-                    squash().
                     withLabel("Yes")
                     
                 );
